@@ -1,6 +1,12 @@
 'use strict';
 
-var log = require('./app');
+var config = {
+    consoleConfig: {
+        json: false,
+    }
+}
+
+var log = require('./app')(config);
 
 var doLogging = function() {
     log.warn('this is a %s log from ContextLogger.', '"warning"');

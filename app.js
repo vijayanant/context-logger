@@ -1,31 +1,14 @@
 'use strict';
 
-var winston = require('winston');
-var cls = require('continuation-local-storage');
+var _               = require('underscore');
+var winston         = require('winston');
+var cls             = require('continuation-local-storage');
+var transportConfig = require('./transport-config');
 
+var winstonLogger = null;
 var delimiter = "|";
+
 var namespace = cls.createNamespace('contextloggernamespace');
-
-var logTransports = [];
-
-var consoleConfig = {
-    timestamp: function() {
-        return new Date().toString();
-    },
-    colorize: true,
-    level: 'debug',
-    levels : {debug: 0, info : 1, warn: 2, error: 3},
-    colors : {debug: 'blue', info : 'green', warn: 'orange', error: 'red'},
-    handleExeptions: true,
-    humanReadableUnhandledException: true,
-    json: false,
-};
-
-logTransports.push(new winston.transports.Console(consoleConfig));
-
-var winstonLogger = new winston.Logger({
-    transports: logTransports
-});
 
 var constructLogMessage = function(prefix, args) {
     args[0] = prefix + args[0];
@@ -68,7 +51,7 @@ var debug = function(message) {
     winstonLogger.debug.apply(null, logArguments);
 };
 
-var run = function(tracking, func) {
+var withContext = function(tracking, func) {
     // var namespace = cls.getNamespace('contextloggernamespace');
     // console.log(namespace);
     namespace.run(function(){
@@ -77,10 +60,30 @@ var run = function(tracking, func) {
     });
 };
 
-module.exports =  {
-    info: info,
-    warn: warn,
-    debug: debug,
-    error: error,
-    run: run
+module.exports = function(config) {
+    if (!config) {
+        throw new Error('log configuration is required');
+    }
+
+    var logTransports = [];
+
+    if (config.delimiter) {
+        delimiter = config.delimiter;
+    }
+
+    var consoleConfig = _.extend(transportConfig.consoleConfig, config.consoleConfig || {});
+    var consoleTransport   = new winston.transports.Console(consoleConfig);
+    logTransports.push(consoleTransport);
+
+    winstonLogger = new winston.Logger({
+        transports: logTransports
+    });
+
+    return {
+        warn: warn,
+        info: info,
+        debug: debug,
+        error: error,
+        withContext: withContext
+    };
 };
