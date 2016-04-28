@@ -15,6 +15,7 @@
   "author": "Vijay Anant <vijay.hassan@gmail.com> (http://vijayanant.github.io)",
   "license": "ISC",
   "dependencies": {
+    "continuation-local-storage": "^3.1.7",
     "winston": "^2.2.0"
   }
 }

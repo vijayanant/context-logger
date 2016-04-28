@@ -1,6 +1,10 @@
 'use strict';
 
 var winston = require('winston');
+var cls = require('continuation-local-storage');
+
+var delimiter = "|";
+var namespace = cls.createNamespace('contextloggernamespace');
 
 var logTransports = [];
 
@@ -23,9 +27,50 @@ var winstonLogger = new winston.Logger({
     transports: logTransports
 });
 
+var constructLogMessage = function(prefix, args) {
+    args[0] = prefix + args[0];
+    return args;
+};
+
+var constructContextString = function() {
+    var tracking = namespace.get('trackingInfo');
+    if (tracking) {
+        var trackingFields = [
+            tracking.systemName || '',
+            tracking.trackingId || '',
+            tracking.useCase || '',
+        ];
+        /*
+            Note: fields 'date', 'hostname', 'log type' are added by the winston logger
+        */
+        return trackingFields.join(delimiter) + delimiter;
+    }
+    return '';
+};
+
+var info = function() {
+    var logArguments = constructLogMessage(constructContextString(), arguments);;
+    winstonLogger.info.apply(null, logArguments);
+};
+
+var warn = function() {
+    var logArguments = constructLogMessage(constructContextString(), arguments);;
+    winstonLogger.warn.apply(null, logArguments);
+};
+
+var error = function(message) {
+    var logArguments = constructLogMessage(constructContextString(), arguments);;
+    winstonLogger.error.apply(null, logArguments);
+};
+
+var debug = function(message) {
+    var logArguments = constructLogMessage(constructContextString(), arguments);;
+    winstonLogger.debug.apply(null, logArguments);
+};
+
 module.exports =  {
-    info: winstonLogger.info,
-    warn: winstonLogger.warn,
-    debug: winstonLogger.debug,
-    error: winstonLogger.error
-}
+    info: info,
+    warn: warn,
+    debug: debug,
+    error: error
+};
