@@ -13,5 +13,8 @@
     "tracking"
   ],
   "author": "Vijay Anant <vijay.hassan@gmail.com> (http://vijayanant.github.io)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "winston": "^2.2.0"
+  }
 }
