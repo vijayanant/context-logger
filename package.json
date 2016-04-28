@@ -1,0 +1,17 @@
+{
+  "name": "context-logger",
+  "version": "0.0.1",
+  "description": "A logger that can maintain context for a request and include it on all log entries.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "logger",
+    "context",
+    "request",
+    "tracking"
+  ],
+  "author": "Vijay Anant <vijay.hassan@gmail.com> (http://vijayanant.github.io)",
+  "license": "ISC"
+}
