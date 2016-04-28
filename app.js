@@ -68,9 +68,19 @@ var debug = function(message) {
     winstonLogger.debug.apply(null, logArguments);
 };
 
+var run = function(tracking, func) {
+    // var namespace = cls.getNamespace('contextloggernamespace');
+    // console.log(namespace);
+    namespace.run(function(){
+        namespace.set('trackingInfo', tracking);
+        func();
+    });
+};
+
 module.exports =  {
     info: info,
     warn: warn,
     debug: debug,
-    error: error
+    error: error,
+    run: run
 };

@@ -1,8 +1,6 @@
 'use strict';
 
-var cls = require('continuation-local-storage');
 var log = require('./app');
-
 
 var doLogging = function() {
     log.warn('this is a %s log from ContextLogger.', '"warning"');
@@ -17,14 +15,10 @@ var tracking = {
     systemName: ' System V',
 };
 
-
 console.log('\nlogging before setting namespace\n');
 doLogging();
 
-var namespace = cls.getNamespace('contextloggernamespace');
-
-namespace.run(function() {
-    namespace.set('trackingInfo', tracking);
+log.withContext(tracking, function() {
     console.log('\nlogging with trackingInfo');
     doLogging();
 });
