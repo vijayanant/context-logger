@@ -21,10 +21,10 @@ var tracking = {
     systemName: ' System V',
 };
 
-console.log('\nlogging before setting namespace\n');
+console.log('\nlogging without context\n');
 doLogging();
 
 log.withContext(tracking, function() {
-    console.log('\nlogging with trackingInfo');
+    console.log('\nlogging with context');
     doLogging();
 });
