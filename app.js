@@ -32,23 +32,19 @@ var constructContextString = function() {
 };
 
 var info = function() {
-    var logArguments = constructLogMessage(constructContextString(), arguments);;
-    winstonLogger.info.apply(null, logArguments);
+    winstonLogger.info.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var warn = function() {
-    var logArguments = constructLogMessage(constructContextString(), arguments);;
-    winstonLogger.warn.apply(null, logArguments);
+    winstonLogger.warn.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var error = function(message) {
-    var logArguments = constructLogMessage(constructContextString(), arguments);;
-    winstonLogger.error.apply(null, logArguments);
+    winstonLogger.error.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var debug = function(message) {
-    var logArguments = constructLogMessage(constructContextString(), arguments);;
-    winstonLogger.debug.apply(null, logArguments);
+    winstonLogger.debug.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var withContext = function(tracking, func) {
