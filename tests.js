@@ -1,8 +1,20 @@
 'use strict';
 
 var config = {
-    consoleConfig: {
-        json: false,
+    delimiter: '|',
+    logTargets: {
+        console: [
+            {
+                name: 'info-log',
+                json: false,
+                level: 'warn',
+            },
+            {
+                name: 'error-log',
+                json: true,
+                level: 'error',
+            }
+        ],
     }
 }
 

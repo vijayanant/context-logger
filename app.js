@@ -57,7 +57,7 @@ var withContext = function(tracking, func) {
 };
 
 module.exports = function(config) {
-    if (!config) {
+    if (!config || config.length === 0) {
         throw new Error('log configuration is required');
     }
 
@@ -67,9 +67,11 @@ module.exports = function(config) {
         delimiter = config.delimiter;
     }
 
-    var consoleConfig = _.extend(transportConfig.consoleConfig, config.consoleConfig || {});
-    var consoleTransport   = new winston.transports.Console(consoleConfig);
-    logTransports.push(consoleTransport);
+    _.each(config.logTargets.console, function(consoleConfig){
+        var  config = _.extend(transportConfig.consoleConfig, consoleConfig || {});
+        var   transport   = new winston.transports.Console(config);
+        logTransports.push(transport);
+    });
 
     winstonLogger = new winston.Logger({
         transports: logTransports
