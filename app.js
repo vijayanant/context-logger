@@ -1,11 +1,8 @@
 'use strict';
 
-var _               = require('underscore');
-var winston         = require('winston');
-var cls             = require('continuation-local-storage');
-var transportConfig = require('./transport-config');
+var cls = require('continuation-local-storage');
 
-var winstonLogger = null;
+var logger = null;
 var delimiter = "|";
 
 var namespace = cls.createNamespace('contextloggernamespace');
@@ -23,59 +20,40 @@ var constructContextString = function() {
             tracking.trackingId || '',
             tracking.useCase || '',
         ];
-        /*
-            Note: fields 'date', 'hostname', 'log type' are added by the winston logger
-        */
         return trackingFields.join(delimiter) + delimiter;
     }
     return '';
 };
 
 var info = function() {
-    winstonLogger.info.apply(null, constructLogMessage(constructContextString(), arguments));
+    logger.info.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var warn = function() {
-    winstonLogger.warn.apply(null, constructLogMessage(constructContextString(), arguments));
+    logger.warn.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var error = function(message) {
-    winstonLogger.error.apply(null, constructLogMessage(constructContextString(), arguments));
+    logger.error.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var debug = function(message) {
-    winstonLogger.debug.apply(null, constructLogMessage(constructContextString(), arguments));
+    logger.debug.apply(null, constructLogMessage(constructContextString(), arguments));
 };
 
 var withContext = function(tracking, func) {
-    // var namespace = cls.getNamespace('contextloggernamespace');
-    // console.log(namespace);
     namespace.run(function(){
         namespace.set('trackingInfo', tracking);
         func();
     });
 };
 
-module.exports = function(config) {
-    if (!config || config.length === 0) {
-        throw new Error('log configuration is required');
+module.exports = function(loggerInstance) {
+    if (!loggerInstance) {
+        throw new Error('logger instance is required');
     }
 
-    var logTransports = [];
-
-    if (config.delimiter) {
-        delimiter = config.delimiter;
-    }
-
-    _.each(config.logTargets.console, function(consoleConfig){
-        var  config = _.extend(transportConfig.consoleConfig, consoleConfig || {});
-        var   transport   = new winston.transports.Console(config);
-        logTransports.push(transport);
-    });
-
-    winstonLogger = new winston.Logger({
-        transports: logTransports
-    });
+    logger = loggerInstance;
 
     return {
         warn: warn,
