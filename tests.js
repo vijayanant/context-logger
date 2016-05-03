@@ -1,24 +1,7 @@
 'use strict';
 
-var config = {
-    delimiter: '|',
-    logTargets: {
-        console: [
-            {
-                name: 'info-log',
-                json: false,
-                level: 'warn',
-            },
-            {
-                name: 'error-log',
-                json: true,
-                level: 'error',
-            }
-        ],
-    }
-}
-
-var log = require('./app')(config);
+var winston = require('winston');
+var log = require('./app')(winston);
 
 var doLogging = function() {
     log.warn('this is a %s log from ContextLogger.', '"warning"');
