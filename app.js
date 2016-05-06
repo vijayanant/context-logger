@@ -1,9 +1,11 @@
 'use strict';
 
+var _ = require('underscore');
 var cls = require('continuation-local-storage');
 
 var logger = null;
 var delimiter = "|";
+var trackingFields = null;
 
 var namespace = cls.createNamespace('contextloggernamespace');
 
@@ -14,13 +16,12 @@ var constructLogMessage = function(prefix, args) {
 
 var constructContextString = function() {
     var tracking = namespace.get('trackingInfo');
-    if (tracking) {
-        var trackingFields = [
-            tracking.systemName || '',
-            tracking.trackingId || '',
-            tracking.useCase || '',
-        ];
-        return trackingFields.join(delimiter) + delimiter;
+    if (trackingFields && tracking) {
+        var fields =  [];
+        _.each(trackingFields, function(field){
+            fields.push(tracking[field] || '');
+        });
+        return fields.join(delimiter) + delimiter;
     }
     return '';
 };
@@ -39,6 +40,10 @@ var error = function(message) {
 
 var debug = function(message) {
     logger.debug.apply(null, constructLogMessage(constructContextString(), arguments));
+};
+
+var setTrackingFields = function(fields) {
+    trackingFields = fields;
 };
 
 var withContext = function(tracking, func) {
@@ -60,6 +65,7 @@ module.exports = function(loggerInstance) {
         info: info,
         debug: debug,
         error: error,
-        withContext: withContext
+        withContext: withContext,
+        setTrackingFields: setTrackingFields
     };
 };

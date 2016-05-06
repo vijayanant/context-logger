@@ -10,6 +10,7 @@ var doLogging = function() {
     log.error('this is a %s log from ContextLogger.', '"error"');
 }
 
+log.setTrackingFields(['trackingId', 'useCase', 'systemName']);
 var tracking = {
     trackingId: 'my trackingId',
     useCase: 'my usecase',
